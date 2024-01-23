@@ -1,0 +1,28 @@
+{
+  "name": "urlshortnerbe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "apps.js",
+  "scripts": {
+    "dev": "nodemon apps.js",
+    "start": "node apps.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1541.0",
+    "bcryptjs": "^2.4.3",
+    "config": "^3.3.10",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "nanoid": "^5.0.4",
+    "nodemailer": "^6.9.8",
+    "nodemon": "^3.0.3",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  }
+}
