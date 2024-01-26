@@ -4,18 +4,19 @@ const con = require("../constants/index");
 const bcrypt = require("bcryptjs");
 const commonServices = require("../services/Common");
 const { v4: uuidv4 } = require('uuid');
+const emailjs = require('@emailjs/nodejs');
 
 const user = {
   registration: async (req, res) => {
     try {
       let { name, email, phone, password } = req.body;
 
-      const fetchUserByEmail = await commonServices.readSingleData(req, con.TN.USERS,"*", { email: email })
+      const fetchUserByEmail = await commonServices.readSingleData(req, con.TN.USERS, "*", { email: email })
       if (fetchUserByEmail.length != 0) {
         return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.USER_WITH_EMAIL_ALREADY_EXIST);
       }
 
-      const fetchUserByPhone = await commonServices.readSingleData(req, con.TN.USERS,"*", { phone: phone })
+      const fetchUserByPhone = await commonServices.readSingleData(req, con.TN.USERS, "*", { phone: phone })
       if (fetchUserByPhone.length != 0) {
         return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.USER_WITH_PHONE_ALREADY_EXIST);
       }
@@ -28,9 +29,9 @@ const user = {
         email: email,
         phone: phone,
         password: password,
-        user_id:uuidv4()
+        user_id: uuidv4()
       }
-      
+
       //Insertion
       let result = await commonServices.dynamicInsert(req, con.TN.USERS, userInfo);
       if (!result) {
@@ -70,6 +71,78 @@ const user = {
         token: regularToken,
         refreshToken: refreshToken
       })
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  sendEmailOtp: async (req, res) => {
+    try {
+      const body = req.body;
+      let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+        "email": body.email,
+        "status": "active"
+      });
+      //If no row found
+      if (user.length == 0) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.USER_WITH_EMAIL_DOES_NOT_EXIST);
+      }
+
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      const hours = String(today.getHours()).padStart(2, '0');
+      const minutes = String(today.getMinutes()).padStart(2, '0');
+      const seconds = String(today.getSeconds()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      let updateInfo = {
+        'otp': otp,
+        'otp_date_time': formattedDate
+      };
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { email: body.email })
+      emailjs.send(process.env.EMAILJS_SERVICE_ID, process.env.SENDOTP_TEMPLATE_ID,
+        {
+          "name": user[0].name,
+          "otp": otp,
+          "email": body.email
+        }
+        , { publicKey: process.env.EMAILJS_PUBLIC_KEY })
+        .then(
+          function (response) {
+            console.log('SUCCESS!', response.status, response.text);
+          },
+          function (err) {
+            console.log('FAILED...', err);
+          },
+        );
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.OTP_SENT);
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  forgotPassword: async (req, res) => {
+    try {
+      const body = req.body;
+      let users = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+        "email": body.email,
+        "status": "active"
+      });
+      //If no row found
+      if (users.length == 0) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.USER_WITH_EMAIL_DOES_NOT_EXIST);
+      }
+
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { email: body.email })
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.OTP_SENT)
+
+      const sendOtp = await helper.CM.sendNodeMailerEmail(template, null, body.email)
     } catch (error) {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
     }
