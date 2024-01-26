@@ -4,7 +4,6 @@ const con = require("../constants/index");
 const bcrypt = require("bcryptjs");
 const commonServices = require("../services/Common");
 const { v4: uuidv4 } = require('uuid');
-const emailjs = require('@emailjs/nodejs');
 
 const user = {
   registration: async (req, res) => {
@@ -103,21 +102,12 @@ const user = {
       };
 
       await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { email: body.email })
-      emailjs.send(process.env.EMAILJS_SERVICE_ID, process.env.SENDOTP_TEMPLATE_ID,
+      await helper.CM.sendEmailJsMail(process.env.SENDOTP_TEMPLATE_ID,
         {
           "name": user[0].name,
           "otp": otp,
           "email": body.email
-        }
-        , { publicKey: process.env.EMAILJS_PUBLIC_KEY })
-        .then(
-          function (response) {
-            console.log('SUCCESS!', response.status, response.text);
-          },
-          function (err) {
-            console.log('FAILED...', err);
-          },
-        );
+        })
 
       return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.OTP_SENT);
     } catch (error) {
@@ -125,24 +115,37 @@ const user = {
     }
   },
 
-  forgotPassword: async (req, res) => {
+  forgetPassword: async (req, res) => {
     try {
       const body = req.body;
-      let users = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+      let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
         "email": body.email,
         "status": "active"
       });
       //If no row found
-      if (users.length == 0) {
+      if (user.length == 0) {
         return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.USER_WITH_EMAIL_DOES_NOT_EXIST);
       }
 
-
+      if (user[0].otp != body.otp) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.INVALID_OTP);
+      }
+      
+      if((new Date()-new Date(user[0].otp_date_time))/60000>5) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.OTP_EXPIRED)
+      }
+      const salt = await bcrypt.genSalt(10);
+      body.password = await bcrypt.hash(body.password, salt);
+      let updateInfo = {
+        otp:null,
+        otp_date_time:null,
+        email_verified:true,
+        password:body.password
+      }
       await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { email: body.email })
 
-      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.OTP_SENT)
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.PASSWORD_CHANGED_SUCCESSFULLY)
 
-      const sendOtp = await helper.CM.sendNodeMailerEmail(template, null, body.email)
     } catch (error) {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
     }

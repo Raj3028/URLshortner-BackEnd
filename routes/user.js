@@ -15,19 +15,32 @@ module.exports = (router) => {
     }),
     reqValidator,
     userController.registration)
-    router.post(
-      "/login",
-      validator(Joi, {
-        email: Joi.string().email().required(),
-        password: Joi.string().required()
-      }),
-      reqValidator,
-      userController.login);
-      router.post(
-        "/sendEmailOtp",
-        validator(Joi, {
-          email: Joi.string().email().required()
-        }),
-        reqValidator,
-        userController.sendEmailOtp);
+
+  router.post(
+    "/login",
+    validator(Joi, {
+      email: Joi.string().email().required(),
+      password: Joi.string().required()
+    }),
+    reqValidator,
+    userController.login);
+
+  router.post(
+    "/sendEmailOtp",
+    validator(Joi, {
+      email: Joi.string().email().required()
+    }),
+    reqValidator,
+    userController.sendEmailOtp);
+
+  router.post(
+    "/forgetPassword",
+    validator(Joi, {
+      otp: Joi.number().integer().min(0).max(9999).required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/, con.RM.PASSWORD_MUST_BE_MINIMUM_).required(),
+      confirmPassword: Joi.any().equal(Joi.ref('password'))
+    }),
+    reqValidator,
+    userController.forgetPassword);
 };

@@ -24,5 +24,7 @@ module.exports = Object.freeze({
     RECORD_ADDED_SUCCESSFULLY: "Record added successfully",
     SUCCESSFULLY: "Successfully",
     INVALID_EXTENSION: 'Invalid file extension',
-    HEADER_NOT_IN_CORRECT_FORMAT: 'Header not in correct format'
+    HEADER_NOT_IN_CORRECT_FORMAT: 'Header not in correct format',
+    PASSWORD_CHANGED_SUCCESSFULLY:"Password changed successfully",
+    OTP_EXPIRED:"Otp expired"
 });

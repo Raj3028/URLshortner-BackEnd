@@ -3,8 +3,7 @@ const logger = require('../../logger/index');
 const customError = require('../handler/errorHandler');
 const commonServices = require('../services/Common');
 const con = require("../constants/index");
-const emailService = require('config').get('emailService');
-const nodemailer = require('nodemailer');
+const emailjs = require('@emailjs/nodejs');
 
 
 const common = {
@@ -40,30 +39,20 @@ const common = {
             throw new customError('Unable to decrypt token', error.message);
         }
     },
-    sendNodeMailerEmail: async (templateData, attachments, emailId) => {
+    sendEmailJsMail: async (templateId, userDetail) => {
         try {
-            var subject = templateData[0].subject;
-            let mailBody = templateData[0].html;
-
-            const transporter = nodemailer.createTransport(emailService);
-
-            const mailOptions = {
-                from: 'support@lenshub.in',
-                to: emailId,
-                subject: subject,
-                html: mailBody,
-                attachments: attachments ? attachments : null
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.error('Error:', error);
-                } else {
-                    console.log('Email sent:', info.response);
-                }
-            });
-
-
+           const sendEmail = emailjs.send(process.env.EMAILJS_SERVICE_ID, templateId,
+                userDetail
+                , { publicKey: process.env.EMAILJS_PUBLIC_KEY, privateKey: process.env.EMAILJS_PRIVATE_KEY })
+                .then(
+                    function (response) {
+                        console.log('SUCCESS!', response.status);
+                    },
+                    function (err) {
+                        console.log('FAILED...', err);
+                    },
+                );
+                return sendEmail
         } catch (error) {
             logger.info(JSON.stringify(error));
             return error;
