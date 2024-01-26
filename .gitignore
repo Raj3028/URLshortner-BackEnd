@@ -8,6 +8,9 @@ node_modules/
 dist/
 uploads/
 
+# Ignore .env files
+.env
+
 # Compiled Java class files
 *.class
 
