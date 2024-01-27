@@ -3,6 +3,7 @@ const Joi = require("joi");
 const validator = require("../src/middleware/joiValidator");
 const reqValidator = require("../src/middleware/reqValidator");
 const con = require("../src/constants/index");
+const auth = require("../src/middleware/jwtAuthValidation");
 
 module.exports = (router) => {
   router.post(
@@ -43,4 +44,21 @@ module.exports = (router) => {
     }),
     reqValidator,
     userController.forgetPassword);
+
+  router.get(
+    "/verifyEmail/:verificationToken",
+    reqValidator,
+    userController.verifyEmail)
+
+  router.get(
+    "/userDetails",
+    auth,
+    reqValidator,
+    userController.userDetails);
+
+  router.get(
+    "/sendEmailVerificationLink",
+    auth,
+    reqValidator,
+    userController.sendEmailVerificationLink)
 };

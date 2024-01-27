@@ -28,7 +28,8 @@ const user = {
         email: email,
         phone: phone,
         password: password,
-        user_id: uuidv4()
+        user_id: uuidv4(),
+        verification_token: uuidv4()
       }
 
       //Insertion
@@ -36,6 +37,14 @@ const user = {
       if (!result) {
         return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.SOMETHING_WENT_WRONG);
       }
+
+      // Send Registration Email
+      await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,
+        {
+          name: name,
+          email: email,
+          link: `${process.env.FRONTEND_URL}/verify/${userInfo.verification_token}`
+        })
 
       return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.REGISTRATION_SUCCESSFULL)
     } catch (error) {
@@ -130,21 +139,81 @@ const user = {
       if (user[0].otp != body.otp) {
         return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.INVALID_OTP);
       }
-      
-      if((new Date()-new Date(user[0].otp_date_time))/60000>5) {
+
+      if ((new Date() - new Date(user[0].otp_date_time)) / 60000 > 5) {
         return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.OTP_EXPIRED)
       }
       const salt = await bcrypt.genSalt(10);
       body.password = await bcrypt.hash(body.password, salt);
       let updateInfo = {
-        otp:null,
-        otp_date_time:null,
-        email_verified:true,
-        password:body.password
+        otp: null,
+        otp_date_time: null,
+        verification_token: null,
+        email_verified: true,
+        password: body.password
       }
       await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { email: body.email })
 
       return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.PASSWORD_CHANGED_SUCCESSFULLY)
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  userDetails: async (req, res) => {
+    try {
+      let user = await commonServices.readSingleData(req, con.TN.USERS, 'id,user_id,name,email,phone,password,profile_picture,status,account_type', {
+        user_id: req.token.user_id
+      });
+      //If no row found
+      if (user.length == 0) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.RECORD_NOT_FOUND);
+      }
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { user: user })
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  verifyEmail: async (req, res) => {
+    try {
+      let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+        verification_token: req.params.verificationToken
+      });
+      //If no row found
+      if (user.length == 0) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.RECORD_NOT_FOUND);
+      }
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, { email_verified: true, verification_token: null }, { user_id: user[0].user_id })
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.EMAIL_VERIFIED_SUCCESSFULLY)
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  sendEmailVerificationLink: async (req, res) => {
+    try {
+
+
+      let verificationToken = uuidv4()
+
+      // Send Email VErification Email
+      await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,
+        {
+          name: req.token.name,
+          email: req.token.email,
+          link: `${process.env.FRONTEND_URL}/verify/${verificationToken}`
+        })
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, { verification_token: verificationToken }, { user_id: req.token.user_id })
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.VERIFICATION_EMAIL_SENT_SUCCESSFULLY)
 
     } catch (error) {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);

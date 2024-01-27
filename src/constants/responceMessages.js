@@ -26,5 +26,7 @@ module.exports = Object.freeze({
     INVALID_EXTENSION: 'Invalid file extension',
     HEADER_NOT_IN_CORRECT_FORMAT: 'Header not in correct format',
     PASSWORD_CHANGED_SUCCESSFULLY:"Password changed successfully",
-    OTP_EXPIRED:"Otp expired"
+    OTP_EXPIRED:"Otp expired",
+    EMAIL_VERIFIED_SUCCESSFULLY:"Email verified successfully",
+    VERIFICATION_EMAIL_SENT_SUCCESSFULLY:"Verification email sent successfully"
 });

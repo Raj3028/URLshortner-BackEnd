@@ -14,7 +14,7 @@ module.exports = async function (req, res, next) {
         const decodedToken = jwt.verify(token, process.env.JWTKEY);
         //check user Email
         const check = await commonServices.readSingleData(req, con.TN.USERS, '*', {
-            "user_id": decodedToken.userId
+            "user_id": decodedToken.user_id
         })
         if (check.length == 0) {
             return helpers.RH.cResponse(req, res, con.SC.NOT_FOUND, { en: con.RM.RECORD_NOT_FOUND }, [], null);
