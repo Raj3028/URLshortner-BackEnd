@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Jan 26, 2024 at 12:14 PM
+-- Generation Time: Jan 27, 2024 at 10:01 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -40,6 +40,7 @@ CREATE TABLE `users` (
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `account_type` enum('individual','organisation') NOT NULL DEFAULT 'individual',
   `email_verified` enum('true','false') NOT NULL DEFAULT 'false',
+  `verification_token` longtext DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -48,9 +49,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `user_id`, `name`, `email`, `phone`, `password`, `otp`, `otp_date_time`, `profile_picture`, `status`, `account_type`, `email_verified`, `created_at`, `updated_at`) VALUES
-(1, '2b9a94c7-bcec-4d7b-80bc-8b489ea5e280', 'soubhagya samal', 'soubhagyasamal03@gmail.com', '9556241447', '$2a$10$nVzhdGndn3mNh.P8LvLhpOEyNdOyXuWp4gLVQnw1U17q2UzbuWyQy', NULL, NULL, NULL, 'active', 'individual', 'false', '2024-01-26 10:46:23', '2024-01-26 10:48:25'),
-(2, 'bcfab6a5-8f93-4c2b-9188-3629d5e19596', 'soubhagya samal', 'soubhagyasamal04@gmail.com', '9556241448', '$2a$10$DViLX/5caFRVXVRG/qRsdOhiV07JkONV1OlN0wzBvZpJVFKKBhley', NULL, NULL, NULL, 'active', 'individual', 'false', '2024-01-26 10:47:24', '2024-01-26 10:48:31');
+INSERT INTO `users` (`id`, `user_id`, `name`, `email`, `phone`, `password`, `otp`, `otp_date_time`, `profile_picture`, `status`, `account_type`, `email_verified`, `verification_token`, `created_at`, `updated_at`) VALUES
+(1, '7b8c0637-87c2-43d7-a1f8-d631dc83aa39', 'soubhagya samal', 'soubhagyasamal03@gmail.com', '9556246447', '$2a$10$sZ/maNDhg4/tYzeVoG.s7OTTNtkazYuboDCIfvEaOQ.Lv5Q1fN9Mi', NULL, NULL, NULL, 'active', 'individual', 'true', NULL, '2024-01-27 08:21:05', '2024-01-27 09:00:54');
 
 --
 -- Indexes for dumped tables
@@ -72,7 +72,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
