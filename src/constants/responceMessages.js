@@ -28,5 +28,6 @@ module.exports = Object.freeze({
     PASSWORD_CHANGED_SUCCESSFULLY:"Password changed successfully",
     OTP_EXPIRED:"Otp expired",
     EMAIL_VERIFIED_SUCCESSFULLY:"Email verified successfully",
-    VERIFICATION_EMAIL_SENT_SUCCESSFULLY:"Verification email sent successfully"
+    VERIFICATION_EMAIL_SENT_SUCCESSFULLY:"Verification email sent successfully",
+    EMAIL_ALREADY_VERIFIED:"Email already verified"
 });
