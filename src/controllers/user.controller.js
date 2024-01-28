@@ -182,21 +182,17 @@ const user = {
   verifyEmail: async (req, res) => {
     try {
 
-      let userId;
-      jwt.verify(req.params.verificationToken, process.env.JWTKEY, (error, decodedToken) => {
-        if (error) return helper.RH.cResponse(req, res, con.SC.UNPROCESSABLE_ENTITY, { en: error.message }, [], null);
-        userId = decodedToken.user_id
-      });
+      const data = jwt.verify(req.params.verificationToken, process.env.JWTKEY);
 
       let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
-        user_id: userId
+        user_id: data.user_id
       });
-      //If no row found
+
       if (user.length == 0) {
         return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.RECORD_NOT_FOUND);
       }
 
-      if (user[0].email_verified) {
+      if (user[0].email_verified === "true") {
         return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.EMAIL_ALREADY_VERIFIED);
       }
 
@@ -204,8 +200,8 @@ const user = {
 
       return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.EMAIL_VERIFIED_SUCCESSFULLY)
 
-    } catch (error) {
-      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    } catch (e) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, con.RM.SOMETHING_WENT_WRONG);
     }
   },
 
