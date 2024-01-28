@@ -4,6 +4,7 @@ const con = require("../constants/index");
 const bcrypt = require("bcryptjs");
 const commonServices = require("../services/Common");
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 const user = {
   registration: async (req, res) => {
