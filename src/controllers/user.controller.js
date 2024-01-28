@@ -211,7 +211,7 @@ const user = {
         user_id: req.token.user_id
       });
 
-      let verificationToken = helper.CM.createToken({ user_id: req.token.user_id }, jwtConfig.verificationTokenExpiry,"verificationToken");
+      let verificationToken = helper.CM.createToken({ user_id: req.token.user_id }, jwtConfig.verificationTokenExpiry, "verificationToken");
 
       // Send Email VErification Email
       await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,
@@ -224,6 +224,42 @@ const user = {
       await commonServices.dynamicUpdate(req, con.TN.USERS, { verification_token: verificationToken }, { user_id: req.token.user_id })
 
       return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.VERIFICATION_EMAIL_SENT_SUCCESSFULLY)
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+  updateUser: async (req, res) => {
+    try {
+
+      let key = body.updateKey
+
+      if (key == 'profile') {
+        if (body.name) {
+          updateInfo.name = body.name
+        }
+
+        if (body.phone) {
+          const fetchUserByPhone = await commonServices.readSingleData(req, con.TN.USERS, "*", { phone: body.phone })
+          if (fetchUserByPhone.length != 0) {
+            if (fetchUserByPhone[0].user_id != req.token.user_id)
+              return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.USER_WITH_PHONE_ALREADY_EXIST);
+          }
+          updateInfo.phone = body.phone
+        }
+
+      } else if (key == 'password') {
+        if (!password) {
+          return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.PASSWORD_IS_REQUIRED);
+        }
+        const salt = await bcrypt.genSalt(10);
+        updateInfo.password = await bcrypt.hash(body.password, salt);
+      }
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { user_id: req.token.user_id })
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.SUCCESSFULLY)
 
     } catch (error) {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
