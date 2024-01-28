@@ -273,7 +273,7 @@ const user = {
 
       await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { user_id: req.token.user_id })
 
-      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.SUCCESSFULLY)
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_UPDATED_SUCCESSFULLY)
 
     } catch (error) {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);

@@ -32,5 +32,6 @@ module.exports = Object.freeze({
     EMAIL_ALREADY_VERIFIED:"Email already verified",
     NEW_PASSWORD_IS_REQUIRED:"New Password is required",
     OLD_PASSWORD_IS_REQUIRED:"Old Password is required",
-    OLD_PASSWORD_NOT_MATCHING:"Old password not matching"
+    OLD_PASSWORD_NOT_MATCHING:"Old password not matching",
+    RECORD_UPDATED_SUCCESSFULLY:"Record Updated Successfully"
 });
