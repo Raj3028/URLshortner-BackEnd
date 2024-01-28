@@ -199,15 +199,21 @@ const user = {
 
   sendEmailVerificationLink: async (req, res) => {
     try {
-
+      let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+        user_id: req.token.user_id
+      });
+      //If no row found
+      if (user.length == 0) {
+        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.RECORD_NOT_FOUND);
+      }
 
       let verificationToken = uuidv4()
 
       // Send Email VErification Email
       await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,
         {
-          name: req.token.name,
-          email: req.token.email,
+          name: user[0].name,
+          email: user[0].email,
           link: `${process.env.FRONTEND_URL}/verify/${verificationToken}`
         })
 
