@@ -182,16 +182,21 @@ const user = {
   verifyEmail: async (req, res) => {
     try {
 
-      const decodedToken = jwt.verify(req.params.verificationToken, process.env.JWTKEY);
+      let userId;
+      jwt.verify(req.params.verificationToken, process.env.JWTKEY, (error, decodedToken) => {
+        if (error) return helper.RH.cResponse(req, res, con.SC.UNPROCESSABLE_ENTITY, { en: error.message }, [], null);
+        userId = decodedToken.user_id
+      });
+
       let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
-        user_id: decodedToken.user_id
+        user_id: userId
       });
       //If no row found
       if (user.length == 0) {
         return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.RECORD_NOT_FOUND);
       }
-      
-      if(user[0].email_verified) {
+
+      if (user[0].email_verified) {
         return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.EMAIL_ALREADY_VERIFIED);
       }
 
@@ -210,7 +215,7 @@ const user = {
         user_id: req.token.user_id
       });
 
-      let verificationToken = helper.CM.createToken({user_id:req.token.user_id}, process.env.SECRETKEY);
+      let verificationToken = helper.CM.createToken({ user_id: req.token.user_id }, jwtConfig.verificationTokenExpiry,"verificationToken");
 
       // Send Email VErification Email
       await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,

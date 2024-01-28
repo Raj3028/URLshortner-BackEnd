@@ -11,10 +11,8 @@ const config = {
   jwtConfig: {
     jwtKey: process.env.JWTKEY,
     jwtExpirySeconds: process.env.JWTEXPIRYSECONDS,
-    refreshTokenExpiry: process.env.REFRESHTOKENEXPIRY
-  },
-  verificationTokenConfig: {
-    secretkey: process.env.SECRETKEY
+    refreshTokenExpiry: process.env.REFRESHTOKENEXPIRY,
+    verificationTokenExpiry:process.env.VERIFICATIONTOKENEXPIRY
   }
 };
 
