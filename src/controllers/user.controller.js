@@ -163,7 +163,7 @@ const user = {
 
   userDetails: async (req, res) => {
     try {
-      let user = await commonServices.readSingleData(req, con.TN.USERS, 'id,user_id,name,email,phone,password,profile_picture,status,account_type', {
+      let user = await commonServices.readSingleData(req, con.TN.USERS, 'id,user_id,name,email,phone,email_verified,profile_picture,status,account_type', {
         user_id: req.token.user_id
       });
       //If no row found

@@ -11,6 +11,9 @@ uploads/
 # Ignore .env files
 .env
 
+#Ignore log files
+logs/
+
 # Compiled Java class files
 *.class
 
