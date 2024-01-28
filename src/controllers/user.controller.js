@@ -265,7 +265,7 @@ const user = {
 
         const match = await bcrypt.compare(body.oldPassword, loginResults[0].password);
         if (match == false) {
-          return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.OLD_PASSWORD_NOT_MATCHING);
+          return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.OLD_PASSWORD_NOT_MATCHING);
         }
         const salt = await bcrypt.genSalt(10);
         updateInfo.password = await bcrypt.hash(body.newPassword, salt);

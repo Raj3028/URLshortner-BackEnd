@@ -70,7 +70,7 @@ module.exports = (router) => {
         updateKey: Joi.string().valid('profile','password').required(),
         oldPassword: Joi.string(),
         newPassword: Joi.string().regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/, con.RM.PASSWORD_MUST_BE_MINIMUM_),
-        confirmPassword: Joi.any().equal(Joi.ref('confirmPassword'))
+        confirmPassword: Joi.any().equal(Joi.ref('newPassword'))
       }),
       auth,
       reqValidator,
