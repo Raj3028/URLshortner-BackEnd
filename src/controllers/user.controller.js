@@ -202,10 +202,6 @@ const user = {
       let user = await commonServices.readSingleData(req, con.TN.USERS, '*', {
         user_id: req.token.user_id
       });
-      //If no row found
-      if (user.length == 0) {
-        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.RECORD_NOT_FOUND);
-      }
 
       let verificationToken = uuidv4()
 
