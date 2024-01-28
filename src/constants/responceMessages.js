@@ -30,5 +30,7 @@ module.exports = Object.freeze({
     EMAIL_VERIFIED_SUCCESSFULLY:"Email verified successfully",
     VERIFICATION_EMAIL_SENT_SUCCESSFULLY:"Verification email sent successfully",
     EMAIL_ALREADY_VERIFIED:"Email already verified",
-    PASSWORD_IS_REQUIRED:"Password is required"
+    NEW_PASSWORD_IS_REQUIRED:"New Password is required",
+    OLD_PASSWORD_IS_REQUIRED:"Old Password is required",
+    OLD_PASSWORD_NOT_MATCHING:"Old password not matching"
 });

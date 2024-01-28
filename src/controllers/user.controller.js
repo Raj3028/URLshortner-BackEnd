@@ -233,6 +233,8 @@ const user = {
   updateUser: async (req, res) => {
     try {
 
+      let updateInfo = {};
+      let body = req.body;
       let key = body.updateKey
 
       if (key == 'profile') {
@@ -250,11 +252,23 @@ const user = {
         }
 
       } else if (key == 'password') {
-        if (!password) {
-          return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.PASSWORD_IS_REQUIRED);
+
+        if (!body.oldPassword) {
+          return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.OLD_PASSWORD_IS_REQUIRED);
+        }
+        if (!body.newPassword) {
+          return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.NEW_PASSWORD_IS_REQUIRED);
+        }
+        let loginResults = await commonServices.readSingleData(req, con.TN.USERS, '*', {
+          "user_id": req.token.user_id
+        });
+
+        const match = await bcrypt.compare(body.oldPassword, loginResults[0].password);
+        if (match == false) {
+          return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.OLD_PASSWORD_NOT_MATCHING);
         }
         const salt = await bcrypt.genSalt(10);
-        updateInfo.password = await bcrypt.hash(body.password, salt);
+        updateInfo.password = await bcrypt.hash(body.newPassword, salt);
       }
 
       await commonServices.dynamicUpdate(req, con.TN.USERS, updateInfo, { user_id: req.token.user_id })
