@@ -94,7 +94,7 @@ const user = {
       });
       //If no row found
       if (user.length == 0) {
-        return helper.RH.cResponse(req, res, con.SC.UNAUTHORIZED, con.RM.USER_WITH_EMAIL_DOES_NOT_EXIST);
+        return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.USER_WITH_EMAIL_DOES_NOT_EXIST);
       }
 
       const today = new Date();
