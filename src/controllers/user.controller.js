@@ -24,13 +24,16 @@ const user = {
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
 
+      const user_id = uuidv4();
+      const verificationToken = helper.CM.createToken({ user_id: user_id }, jwtConfig.verificationTokenExpiry, "verificationToken");
+
       let userInfo = {
         name: name,
         email: email,
         phone: phone,
         password: password,
-        user_id: uuidv4(),
-        verification_token: uuidv4()
+        user_id: user_id,
+        verification_token: verificationToken
       }
 
       //Insertion
@@ -44,7 +47,7 @@ const user = {
         {
           name: name,
           email: email,
-          link: `${process.env.FRONTEND_URL}/verify/${userInfo.verification_token}`
+          link: `${process.env.FRONTEND_URL}/verify/${verificationToken}`
         })
 
       return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.REGISTRATION_SUCCESSFULL)
@@ -213,7 +216,7 @@ const user = {
 
       let verificationToken = helper.CM.createToken({ user_id: req.token.user_id }, jwtConfig.verificationTokenExpiry, "verificationToken");
 
-      // Send Email VErification Email
+      // Send Email Verification Email
       await helper.CM.sendEmailJsMail(process.env.VERIFYEMAIL_TEMPLATE_ID,
         {
           name: user[0].name,
