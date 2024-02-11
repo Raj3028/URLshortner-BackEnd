@@ -51,7 +51,7 @@ const url = {
                 return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
             }
 
-            return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrls })
+            return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrls })
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }
