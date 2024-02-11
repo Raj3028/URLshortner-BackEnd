@@ -1,3 +1,4 @@
 module.exports = Object.freeze({
-    USERS:"users"
+    USERS:"users",
+    URL:"url"
 });
