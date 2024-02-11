@@ -33,11 +33,11 @@ const url = {
         try {
             let { urlId } = req.body;
 
-            const urls = urlId.forEach(async (id) => {
+            urlId.forEach(async (id) => {
                 await commonServices.dynamicUpdate(req, con.TN.URL, { status: 'inactive' }, { id: id })
             })
 
-            return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.RECORD_UPDATED_SUCCESSFULLY)
+            return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_UPDATED_SUCCESSFULLY)
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }
@@ -45,7 +45,7 @@ const url = {
     getAllUrl: async (req, res) => {
         try {
 
-            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%M %d, %Y %H:%i') AS createdAt,DATE_FORMAT(updated_at, '%M %d, %Y %H:%i') AS updatedAt", { created_by: req.token.user_id })
+            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { created_by: req.token.user_id,  status: 'active'})
 
             if (shortUrls.length == 0) {
                 return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
