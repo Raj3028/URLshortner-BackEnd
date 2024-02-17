@@ -29,12 +29,12 @@ const url = {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }
     },
-    inactiveUrl: async (req, res) => {
+    updateStatus: async (req, res) => {
         try {
-            let { urlId } = req.body;
+            let { urlId,urlStatus } = req.body;
 
             urlId.forEach(async (id) => {
-                await commonServices.dynamicUpdate(req, con.TN.URL, { status: 'inactive' }, { id: id })
+                await commonServices.dynamicUpdate(req, con.TN.URL, { status: urlStatus }, { id: id })
             })
 
             return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_UPDATED_SUCCESSFULLY)
@@ -45,13 +45,27 @@ const url = {
     getAllUrl: async (req, res) => {
         try {
 
-            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { created_by: req.token.user_id,  status: 'active'})
+            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { created_by: req.token.user_id})
 
             // if (shortUrls.length == 0) {
             //     return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
             // }
 
             return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrls })
+        } catch (error) {
+            return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+        }
+    },
+    redirectUrl: async (req, res) => {
+        try {
+            let {shortId} = req.body
+
+            const shortUrl = await commonServices.readSingleData(req, con.TN.URL, "*",{short_id:shortId,status:'active'})
+
+            if (shortUrl.length == 0) {
+                return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
+            }
+            return res.status(302).redirect(shortUrl[0].long_url)
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }

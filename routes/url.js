@@ -23,11 +23,19 @@ module.exports = (router) => {
         urlController.getAllUrl)
 
     router.post(
-        "/inactiveUrl",
-        validator(Joi, {
-            urlId: Joi.array().items().min(1)
-        }),
+        "/updateStatus",
         auth,
+        validator(Joi, {
+            urlId: Joi.array().items().min(1),
+            urlStatus: Joi.string().valid('active', 'inactive').required()
+        }),
         reqValidator,
-        urlController.inactiveUrl)
+        urlController.updateStatus)
+    router.post(
+        "/redirectUrl",
+        validator(Joi, {
+            shortId: Joi.string().required()
+        }),
+        reqValidator,
+        urlController.redirectUrl)
 };
