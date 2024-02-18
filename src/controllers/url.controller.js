@@ -73,9 +73,9 @@ const url = {
     urlDetails: async (req, res) => {
         try {
 
-            const shortUrls = await commonServices.readSingleData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { id:req.body.urlId})
+            const shortUrlDetails = await commonServices.readSingleData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { id:req.body.urlId})
 
-            return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrls })
+            return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrlDetails[0] })
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }
