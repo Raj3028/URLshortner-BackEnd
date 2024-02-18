@@ -75,4 +75,10 @@ module.exports = (router) => {
     auth,
     reqValidator,
     userController.updateUser)
+  router.post("/uploadProfileImage",
+    auth,
+    validator(Joi, {
+      image: Joi.string().required().allow(null)
+    }),
+    userController.uploadProfileImage)
 };

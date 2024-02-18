@@ -65,7 +65,7 @@ const url = {
             if (shortUrl.length == 0) {
                 return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
             }
-            return res.status(302).redirect(shortUrl[0].long_url)
+            return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { url: shortUrl[0].long_url });
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
         }

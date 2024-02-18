@@ -282,6 +282,18 @@ const user = {
       return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
     }
   },
+  uploadProfileImage: async (req, res) => {
+    try {
+      let {image} = req.body
+
+      await commonServices.dynamicUpdate(req, con.TN.USERS, { profile_picture: image }, { user_id: req.token.user_id })
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_UPDATED_SUCCESSFULLY)
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
 }
 
 module.exports = user
