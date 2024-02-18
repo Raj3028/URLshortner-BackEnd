@@ -284,9 +284,11 @@ const user = {
   },
   uploadProfileImage: async (req, res) => {
     try {
-      const imageObject = req.files[0]
-      const base64String = 'data:' + imageObject.mimetype + ';base64,' + imageObject.buffer.toString('base64');
-
+      let base64String = null
+      if(req.files.length!=0) {
+        const imageObject = req.files[0]
+        base64String = 'data:' + imageObject.mimetype + ';base64,' + imageObject.buffer.toString('base64');
+      }
       await commonServices.dynamicUpdate(req, con.TN.USERS, { profile_picture: base64String }, { user_id: req.token.user_id })
 
       return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_UPDATED_SUCCESSFULLY)
