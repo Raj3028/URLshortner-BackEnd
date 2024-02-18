@@ -38,4 +38,12 @@ module.exports = (router) => {
         }),
         reqValidator,
         urlController.redirectUrl)
+    router.post(
+        "/urlDetails",
+        auth,
+        validator(Joi, {
+            urlId: Joi.number().integer().required()
+        }),
+        reqValidator,
+        urlController.urlDetails)
 };
