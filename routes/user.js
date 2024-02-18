@@ -4,7 +4,9 @@ const validator = require("../src/middleware/joiValidator");
 const reqValidator = require("../src/middleware/reqValidator");
 const con = require("../src/constants/index");
 const auth = require("../src/middleware/jwtAuthValidation");
-
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 module.exports = (router) => {
   router.post(
     "/registration",
@@ -76,9 +78,7 @@ module.exports = (router) => {
     reqValidator,
     userController.updateUser)
   router.post("/uploadProfileImage",
+    upload.any(),
     auth,
-    validator(Joi, {
-      image: Joi.string().required().allow(null)
-    }),
     userController.uploadProfileImage)
 };
