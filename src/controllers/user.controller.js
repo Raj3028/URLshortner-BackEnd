@@ -88,6 +88,51 @@ const user = {
     }
   },
 
+  refreshToken: async (req, res) => {
+    try {
+      const oldRefreshToken = req.token;
+
+      const tempData = {
+        user_id: oldRefreshToken.user_id,
+        name: oldRefreshToken.name,
+        email: oldRefreshToken.email,
+        phone: oldRefreshToken.phone,
+      }
+      let regularToken = await helper.CM.createToken(tempData, jwtConfig.jwtExpirySeconds, "login");
+      let refreshToken = await helper.CM.createToken(tempData, jwtConfig.refreshTokenExpiry, "login");
+
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.TOKEN_UPDATE_SUCCESS, {
+        token: regularToken,
+        refreshToken: refreshToken
+      })
+
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+
+  logout: async (req, res) => {
+    try {
+     
+      const tempData = {
+        user_id: "",
+        name: "",
+        email: "",
+        phone: "",
+      }
+
+      let token = await helper.CM.createToken(tempData, -120, "login");
+      return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.LOGOUT, {
+        token: token,
+        refreshToken: token
+      });
+    } catch (error) {
+      return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
+    }
+  },
+
+
   sendEmailOtp: async (req, res) => {
     try {
       const body = req.body;
@@ -285,7 +330,7 @@ const user = {
   uploadProfileImage: async (req, res) => {
     try {
       let base64String = null
-      if(req.files.length!=0) {
+      if (req.files.length != 0) {
         const imageObject = req.files[0]
         base64String = 'data:' + imageObject.mimetype + ';base64,' + imageObject.buffer.toString('base64');
       }

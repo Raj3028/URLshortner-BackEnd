@@ -12,6 +12,8 @@ module.exports = Object.freeze({
     OTP_SENT: "Otp sent successfully",
     USER_WITH_EMAIL_DOES_NOT_EXIST: "User with email does not exist",
     LOGIN_SUCCESSFULL: "Login successfull",
+    LOGOUT: "Logout successfully",
+    TOKEN_UPDATE_SUCCESS: "Token updated successfully",
     PLEASE_PROVIDE_FILE: "Please provide file",
     FILE_UPLOADED_SUCCESSFULLY: "File uploaded successfully.",
     NO_TOKEN_AUTHORIZATION_DENIED: "No Token, Authorization denied",

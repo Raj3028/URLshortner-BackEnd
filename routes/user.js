@@ -28,6 +28,15 @@ module.exports = (router) => {
     reqValidator,
     userController.login);
 
+
+  router.post("/refreshToken", auth,
+    reqValidator,
+    userController.refreshToken);
+
+
+  router.post('/logout', userController.logout);
+
+
   router.post(
     "/sendEmailOtp",
     validator(Joi, {
