@@ -11,7 +11,8 @@ module.exports = (router) => {
         auth,
         validator(Joi, {
             longUrl: Joi.string().uri().required(),
-            title: Joi.string().required()
+            title: Joi.string().required(),
+            type: Joi.string().valid('url','qr')
         }),
         reqValidator,
         urlController.generateShortUrl)
