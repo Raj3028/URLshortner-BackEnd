@@ -35,5 +35,7 @@ module.exports = Object.freeze({
     NEW_PASSWORD_IS_REQUIRED:"New Password is required",
     OLD_PASSWORD_IS_REQUIRED:"Old Password is required",
     OLD_PASSWORD_NOT_MATCHING:"Old password not matching",
-    RECORD_UPDATED_SUCCESSFULLY:"Record Updated Successfully"
+    RECORD_UPDATED_SUCCESSFULLY:"Record Updated Successfully",
+    QR_CODE_EXSISTS:"Qr Code Already Exsists",
+    URL_NOT_FOUND:"Url Not Found"
 });
