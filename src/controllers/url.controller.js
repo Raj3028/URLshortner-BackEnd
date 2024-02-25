@@ -54,7 +54,7 @@ const url = {
     getAllUrl: async (req, res) => {
         try {
 
-            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { created_by: req.token.user_id,type:'url' })
+            const shortUrls = await commonServices.readAllData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { created_by: req.token.user_id, type: 'url' })
 
             // if (shortUrls.length == 0) {
             //     return helper.RH.cResponse(req, res, con.SC.NOT_FOUND, con.RM.RECORD_NOT_FOUND)
@@ -83,6 +83,10 @@ const url = {
         try {
 
             const shortUrlDetails = await commonServices.readSingleData(req, con.TN.URL, "id,title,short_id,long_url,status,DATE_FORMAT(created_at, '%b %d, %Y %h:%i%p') AS createdAt,DATE_FORMAT(updated_at, '%b %d, %Y %h:%i%p') AS updatedAt", { id: req.body.urlId })
+
+            const checkQRCodeDetails = await commonServices.readSingleData(req, con.TN.QRCODES, "id,qr_style,qr_image,status", { url_id: req.body.urlId })
+
+            shortUrlDetails[0].qr_code_details = checkQRCodeDetails.length !== 0 ? checkQRCodeDetails[0] : null;
 
             return helper.RH.cResponse(req, res, con.SC.SUCCESS, con.RM.RECORD_FOUND_SUCCESSFULLY, { data: shortUrlDetails[0] })
         } catch (error) {

@@ -87,7 +87,7 @@ module.exports = (router) => {
     reqValidator,
     userController.updateUser)
   router.post("/uploadProfileImage",
-    upload.any(),
     auth,
+    upload.any(),
     userController.uploadProfileImage)
 };

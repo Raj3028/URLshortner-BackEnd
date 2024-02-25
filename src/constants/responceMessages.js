@@ -24,6 +24,7 @@ module.exports = Object.freeze({
     DELETED_SUCCESSFULLY: "Deleted successfully",
     FILE_UPLOAD_SUCCESS: "File Upload Success",
     RECORD_ADDED_SUCCESSFULLY: "Record added successfully",
+    QR_CREATED_SUCCESSFULLY: "QR-Code Created Successfully",
     SUCCESSFULLY: "Successfully",
     INVALID_EXTENSION: 'Invalid file extension',
     HEADER_NOT_IN_CORRECT_FORMAT: 'Header not in correct format',
@@ -36,6 +37,7 @@ module.exports = Object.freeze({
     OLD_PASSWORD_IS_REQUIRED:"Old Password is required",
     OLD_PASSWORD_NOT_MATCHING:"Old password not matching",
     RECORD_UPDATED_SUCCESSFULLY:"Record Updated Successfully",
+    QR_UPDATED_SUCCESSFULLY:"QR-Code Updated Successfully",
     QR_CODE_EXSISTS:"Qr Code Already Exsists",
     URL_NOT_FOUND:"Url Not Found"
 });

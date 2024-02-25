@@ -11,15 +11,18 @@ const url = {
     addEditQrCode: async (req, res) => {
         try {
             let { urlId, qrStyle, qrCodeId } = req.body;
+            let file = req.files.length !== 0 ? req.files[0] : null
+
             let url = await commonServices.readSingleData(req, con.TN.URL, "*", { id: urlId })
             if (url.length == 0) {
                 return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.URL_NOT_FOUND);
             }
-            let base64String = null
-            if (req.files.length != 0) {
+            let base64String = null;
+            if (file) {
                 const imageObject = req.files[0]
                 base64String = 'data:' + imageObject.mimetype + ';base64,' + imageObject.buffer.toString('base64');
             }
+
             if (qrCodeId) {
                 let qrCode = await commonServices.readSingleData(req, con.TN.QRCODES, "*", { id: qrCodeId })
                 if (qrCode.length == 0) {
@@ -27,10 +30,10 @@ const url = {
                 }
                 const updatedQrCode = await commonServices.dynamicUpdate(req, con.TN.QRCODES, {
                     url_id: urlId,
-                    qr_style: JSON.stringify(qrStyle),
+                    qr_style: qrStyle,
                     qr_image: base64String ? base64String : qrCode[0].qr_image
                 }, { id: qrCodeId })
-                return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.RECORD_UPDATED_SUCCESSFULLY)
+                return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.QR_UPDATED_SUCCESSFULLY)
             }
             let qr = await commonServices.readSingleData(req, con.TN.QRCODES, "*", { url_id: urlId })
             if (qr.length != 0) {
@@ -38,7 +41,7 @@ const url = {
             }
             const qrCode = await commonServices.dynamicInsert(req, con.TN.QRCODES, {
                 url_id: urlId,
-                qr_style: JSON.stringify(qrStyle),
+                qr_style: qrStyle,
                 qr_image: base64String,
                 created_by: req.token.user_id
             })
@@ -47,7 +50,7 @@ const url = {
                 return helper.RH.cResponse(req, res, con.SC.BAD_REQUEST, con.RM.SOMETHING_WENT_WRONG);
             }
 
-            return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.RECORD_ADDED_SUCCESSFULLY)
+            return helper.RH.cResponse(req, res, con.SC.CREATED, con.RM.QR_CREATED_SUCCESSFULLY)
 
         } catch (error) {
             return helper.RH.cResponse(req, res, con.SC.EXPECTATION_FAILED, error);
