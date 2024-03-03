@@ -12,7 +12,7 @@ module.exports = (router) => {
         validator(Joi, {
             longUrl: Joi.string().uri().required(),
             title: Joi.string().required(),
-            type: Joi.string().valid('url','qr')
+            type: Joi.string().valid('url', 'qr')
         }),
         reqValidator,
         urlController.generateShortUrl)
@@ -47,14 +47,14 @@ module.exports = (router) => {
         }),
         reqValidator,
         urlController.urlDetails)
-        router.post(
-            "/editUrl",
-            auth,
-            validator(Joi, {
-                urlId: Joi.number().integer().required(),
-                title:Joi.string().required(),
-                longUrl:Joi.string().uri().required()
-            }),
-            reqValidator,
-            urlController.editUrl)
+    router.post(
+        "/editUrl",
+        auth,
+        validator(Joi, {
+            urlId: Joi.number().integer().required(),
+            title: Joi.string().required(),
+            longUrl: Joi.string().uri().required()
+        }),
+        reqValidator,
+        urlController.editUrl)
 };
