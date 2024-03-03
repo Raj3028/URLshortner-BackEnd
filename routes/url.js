@@ -47,4 +47,14 @@ module.exports = (router) => {
         }),
         reqValidator,
         urlController.urlDetails)
+        router.post(
+            "/editUrl",
+            auth,
+            validator(Joi, {
+                urlId: Joi.number().integer().required(),
+                title:Joi.string().required(),
+                longUrl:Joi.string().uri().required()
+            }),
+            reqValidator,
+            urlController.editUrl)
 };
